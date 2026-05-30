@@ -26,5 +26,5 @@ Objetivo da v2: manter a mesma transparência da v1 (sem janela, sem ícone, sem
    ./install.sh
    ```
 2. Conceda **Acesso Total ao Disco** para o binário instalado em:
-   `~/Library/Application Support/SyncFavoritos/bin/syncfavoritosd`
+   `~/Library/Application Support/SyncFavoritos/bin/syncfavoritos`
 3. No Edge do Mac: carregue a extensão da pasta `v2/edge-extension`.

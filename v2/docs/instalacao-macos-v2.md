@@ -12,16 +12,16 @@ chmod +x install.sh uninstall.sh
 
 Isso instala:
 
-- Binário: `~/Library/Application Support/SyncFavoritos/bin/syncfavoritosd`
+- Binário: `~/Library/Application Support/SyncFavoritos/bin/syncfavoritos`
 - Config: `~/Library/Application Support/SyncFavoritos/config.json`
-- Logs: `~/Library/Application Support/SyncFavoritos/syncfavoritosd.log`
+- Logs: `~/Library/Application Support/SyncFavoritos/syncfavoritos.log`
 - LaunchAgent: `~/Library/LaunchAgents/com.mauroartioli.syncfavoritos.plist`
 
 ## 2) Permissões (obrigatório)
 
 Para o daemon conseguir ler `~/Library/Safari/Bookmarks.plist`, conceda **Acesso Total ao Disco** para:
 
-`~/Library/Application Support/SyncFavoritos/bin/syncfavoritosd`
+`~/Library/Application Support/SyncFavoritos/bin/syncfavoritos`
 
 Caminho: Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco.
 
@@ -46,4 +46,3 @@ Abra no navegador:
 - `http://127.0.0.1:5003/health`
 
 Se estiver ok, deve retornar JSON com `ok: true`.
-

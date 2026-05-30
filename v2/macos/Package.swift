@@ -7,7 +7,7 @@ let package = Package(
         .macOS(.v13)
     ],
     products: [
-        .executable(name: "syncfavoritosd", targets: ["SyncFavoritosDaemon"])
+        .executable(name: "syncfavoritos", targets: ["SyncFavoritosDaemon"])
     ],
     targets: [
         .executableTarget(
@@ -16,4 +16,3 @@ let package = Package(
         )
     ]
 )
-

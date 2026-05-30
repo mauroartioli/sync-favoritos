@@ -6,8 +6,8 @@ REPO_DIR="$(cd "${ROOT_DIR}/../.." && pwd)"
 
 APP_SUPPORT_DIR="${HOME}/Library/Application Support/SyncFavoritos"
 BIN_DIR="${APP_SUPPORT_DIR}/bin"
-BIN_PATH="${BIN_DIR}/syncfavoritosd"
-LOG_PATH="${APP_SUPPORT_DIR}/syncfavoritosd.log"
+BIN_PATH="${BIN_DIR}/syncfavoritos"
+LOG_PATH="${APP_SUPPORT_DIR}/syncfavoritos.log"
 CFG_PATH="${APP_SUPPORT_DIR}/config.json"
 
 LAUNCH_AGENTS_DIR="${HOME}/Library/LaunchAgents"
@@ -34,7 +34,7 @@ BUILD_BIN_DIR="$(swift build -c release \
   --show-bin-path)"
 
 echo "2) Instalando binário em Application Support..."
-cp -f "${BUILD_BIN_DIR}/syncfavoritosd" "${BIN_PATH}"
+cp -f "${BUILD_BIN_DIR}/syncfavoritos" "${BIN_PATH}"
 chmod +x "${BIN_PATH}"
 
 echo "3) Preparando LaunchAgent..."
