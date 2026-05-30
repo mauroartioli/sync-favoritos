@@ -1,0 +1,18 @@
+.DS_Store
+**/.DS_Store
+
+# Logs
+*.log
+v1/mac/server.log
+v1/mac/app_launcher.log
+
+# Data exports (private)
+v1/mac/safari_bookmarks.json
+v1/mac/*.bak
+
+# macOS app build artifacts (v1)
+v1/mac/SyncFavoritos.app
+
+# Python caches (v1)
+__pycache__/
+*.pyc

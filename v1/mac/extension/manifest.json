@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Sync Favoritos Gateway",
+  "version": "1.0.0",
+  "description": "Sincroniza nativamente os favoritos do Safari com o Microsoft Edge usando a API oficial para evitar duplicações de nuvem.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "bookmarks",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://localhost:5003/*"
+  ],
+  "action": {}
+}
