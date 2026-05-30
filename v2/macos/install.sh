@@ -39,8 +39,8 @@ chmod +x "${BIN_PATH}"
 
 echo "3) Preparando LaunchAgent..."
 sed \
-  -e "s|\\${BIN_PATH}|${BIN_PATH}|g" \
-  -e "s|\\${LOG_PATH}|${LOG_PATH}|g" \
+  -e "s|__BIN_PATH__|${BIN_PATH}|g" \
+  -e "s|__LOG_PATH__|${LOG_PATH}|g" \
   "${PLIST_TEMPLATE}" > "${PLIST_PATH}"
 
 echo "4) Recarregando LaunchAgent..."
