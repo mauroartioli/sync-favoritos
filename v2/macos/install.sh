@@ -34,7 +34,19 @@ BUILD_BIN_DIR="$(swift build -c release \
   --show-bin-path)"
 
 echo "2) Instalando binário em Application Support..."
-cp -f "${BUILD_BIN_DIR}/syncfavoritos" "${BIN_PATH}"
+SRC_BIN=""
+if [ -f "${BUILD_BIN_DIR}/syncfavoritos" ]; then
+  SRC_BIN="${BUILD_BIN_DIR}/syncfavoritos"
+elif [ -f "${BUILD_BIN_DIR}/syncfavoritosd" ]; then
+  # Back-compat if user has an older SwiftPM build cache.
+  SRC_BIN="${BUILD_BIN_DIR}/syncfavoritosd"
+else
+  echo "ERRO: binário não encontrado em '${BUILD_BIN_DIR}'."
+  echo "Esperado: syncfavoritos (ou syncfavoritosd)."
+  exit 1
+fi
+
+cp -f "${SRC_BIN}" "${BIN_PATH}"
 chmod +x "${BIN_PATH}"
 
 echo "3) Preparando LaunchAgent..."
