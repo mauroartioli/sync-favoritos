@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Sync Favoritos Gateway (v2)",
+  "version": "2.0.0",
+  "description": "Sincroniza os favoritos do Safari com o Microsoft Edge via gateway local (v2).",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "bookmarks",
+    "alarms",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:5003/*",
+    "http://localhost:5003/*"
+  ],
+  "options_page": "options.html",
+  "action": {}
+}

@@ -13,6 +13,12 @@ v1/mac/*.bak
 # macOS app build artifacts (v1)
 v1/mac/SyncFavoritos.app
 
+# SwiftPM (v2)
+v2/macos/.build/
+
+# v2 runtime data
+v2/**/syncfavoritosd.log
+
 # Python caches (v1)
 __pycache__/
 *.pyc
