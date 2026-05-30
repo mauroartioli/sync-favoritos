@@ -57,7 +57,7 @@ final class Logger {
             FileManager.default.createFile(atPath: url.path, contents: nil)
         }
         handle = try? FileHandle(forWritingTo: url)
-        try? handle?.seekToEnd()
+        _ = try? handle?.seekToEnd()
     }
 
     func info(_ message: String) {

@@ -27,13 +27,14 @@ SCRATCH_PATH="${APP_SUPPORT_DIR}/swiftpm-scratch"
 CACHE_PATH="${APP_SUPPORT_DIR}/swiftpm-cache"
 MODULE_CACHE_PATH="${APP_SUPPORT_DIR}/clang-module-cache"
 mkdir -p "${SCRATCH_PATH}" "${CACHE_PATH}" "${MODULE_CACHE_PATH}"
-swift build -c release \
+BUILD_BIN_DIR="$(swift build -c release \
   --scratch-path "${SCRATCH_PATH}" \
   --cache-path "${CACHE_PATH}" \
-  -Xswiftc -module-cache-path -Xswiftc "${MODULE_CACHE_PATH}"
+  -Xswiftc -module-cache-path -Xswiftc "${MODULE_CACHE_PATH}" \
+  --show-bin-path)"
 
 echo "2) Instalando binário em Application Support..."
-cp -f ".build/release/syncfavoritosd" "${BIN_PATH}"
+cp -f "${BUILD_BIN_DIR}/syncfavoritosd" "${BIN_PATH}"
 chmod +x "${BIN_PATH}"
 
 echo "3) Preparando LaunchAgent..."
