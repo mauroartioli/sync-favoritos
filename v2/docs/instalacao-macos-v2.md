@@ -35,6 +35,8 @@ Caminho: Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Dis
 
 ## 4) (Opcional) Configurar token/endpoint na extensão
 
+Por padrão, a v2 instala o gateway **sem token** (para ser simples e “zero-config”).
+
 Se você quiser habilitar token no gateway (ou mudar endpoint), abra:
 
 - `edge://extensions` → Sync Favoritos (v2) → **Detalhes** → **Opções da extensão**

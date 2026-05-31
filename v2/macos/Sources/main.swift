@@ -23,7 +23,7 @@ struct AppConfig: Codable {
         AppConfig(
             safari_bookmarks_path: "~/Library/Safari/Bookmarks.plist",
             port: 5004,
-            token: UUID().uuidString
+            token: ""
         )
     }
 }
