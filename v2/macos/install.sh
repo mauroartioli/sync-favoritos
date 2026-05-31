@@ -49,22 +49,27 @@ fi
 cp -f "${SRC_BIN}" "${BIN_PATH}"
 chmod +x "${BIN_PATH}"
 
-echo "2b) Criando config default (sem token) se não existir..."
-if [ ! -f "${CFG_PATH}" ]; then
-  CFG_PATH="${CFG_PATH}" python3 - <<'PY'
+echo "2b) Aplicando config default (sem token)..."
+CFG_PATH="${CFG_PATH}" python3 - <<'PY'
 import json, os
 cfg_path = os.path.expanduser(os.environ["CFG_PATH"])
-cfg = {
-  "safari_bookmarks_path": "~/Library/Safari/Bookmarks.plist",
-  "port": 5004,
-  "token": ""
-}
+cfg = {}
+if os.path.exists(cfg_path):
+  try:
+    with open(cfg_path, "r", encoding="utf-8") as f:
+      cfg = json.load(f) or {}
+  except Exception:
+    cfg = {}
+
+cfg["safari_bookmarks_path"] = cfg.get("safari_bookmarks_path") or "~/Library/Safari/Bookmarks.plist"
+cfg["port"] = 5004
+cfg["token"] = ""
+
 os.makedirs(os.path.dirname(cfg_path), exist_ok=True)
 with open(cfg_path, "w", encoding="utf-8") as f:
   json.dump(cfg, f)
-print("Config criada em:", cfg_path)
+print("Config aplicada em:", cfg_path)
 PY
-fi
 
 echo "3) Preparando LaunchAgent..."
 sed \
@@ -111,4 +116,4 @@ echo ""
 echo "Próximos passos:"
 echo "1) Conceda Acesso Total ao Disco ao binário acima (Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco)."
 echo "2) Carregue a extensão do Edge em: ${REPO_DIR}/v2/edge-extension"
-echo "3) (Opcional) Se o gateway exigir token, copie o token do config.json para a extensão (sf_token)."
+echo "3) (Opcional) Se você quiser habilitar token, edite o config.json e preencha o campo 'token'."
