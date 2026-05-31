@@ -14,6 +14,7 @@ const DEFAULTS = {
 
 chrome.runtime.onInstalled.addListener(async () => {
   await ensureDefaults();
+  await ensureOriginsPermission();
   chrome.alarms.create("sync_bookmarks", { periodInMinutes: 5 });
   syncBookmarks();
 });
@@ -36,6 +37,23 @@ async function ensureDefaults() {
   if (typeof stored.sf_endpoint !== "string") toSet.sf_endpoint = DEFAULTS.endpoint;
   if (typeof stored.sf_token !== "string") toSet.sf_token = DEFAULTS.token;
   if (Object.keys(toSet).length > 0) await chrome.storage.local.set(toSet);
+}
+
+async function ensureOriginsPermission() {
+  const origins = [
+    "http://127.0.0.1:5004/*",
+    "http://localhost:5004/*",
+    "http://127.0.0.1:5003/*",
+    "http://localhost:5003/*"
+  ];
+
+  try {
+    const granted = await chrome.permissions.contains({ origins });
+    if (granted) return;
+    await chrome.permissions.request({ origins });
+  } catch (err) {
+    console.warn("Não foi possível solicitar permissões de origem automaticamente:", err);
+  }
 }
 
 function chromiumToSimple(node) {
@@ -91,6 +109,7 @@ async function syncBookmarks() {
     chrome.action.setBadgeBackgroundColor({ color: "#3498DB" });
 
     await ensureDefaults();
+    await ensureOriginsPermission();
     const { sf_endpoint, sf_token } = await chrome.storage.local.get(["sf_endpoint", "sf_token"]);
 
     const headers = {};
