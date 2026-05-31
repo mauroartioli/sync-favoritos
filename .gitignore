@@ -16,6 +16,9 @@ v1/mac/SyncFavoritos.app
 # SwiftPM (v2)
 v2/macos/.build/
 
+# v2 dist artifacts
+v2/dist/
+
 # v2 runtime data
 v2/**/syncfavoritosd.log
 

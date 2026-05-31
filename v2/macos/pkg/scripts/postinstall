@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+
+APP_DST="/Applications/SyncFavoritos.app"
+LA_DST="/Library/LaunchAgents/com.mauroartioli.syncfavoritos.plist"
+
+chmod 644 "${LA_DST}" 2>/dev/null || true
+chown root:wheel "${LA_DST}" 2>/dev/null || true
+
+echo "Sync Favoritos instalado em: ${APP_DST}"
+echo "LaunchAgent instalado em: ${LA_DST}"
+echo "Próximo passo: conceder 'Acesso Total ao Disco' para ${APP_DST} e reiniciar a sessão (logout/login) para iniciar automaticamente."
