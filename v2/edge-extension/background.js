@@ -64,28 +64,108 @@ function chromiumToSimple(node) {
   return { type: "folder", name: node.title, children };
 }
 
-async function clearFolder(folderId) {
-  const children = await chrome.bookmarks.getChildren(folderId);
-  for (const child of children) {
+function normTitle(title) {
+  return String(title || "").trim();
+}
+
+function desiredKey(node) {
+  if (node.type === "url") return `u:${node.url || ""}`;
+  return `f:${normTitle(node.name)}`;
+}
+
+function existingKey(node) {
+  if (node.url) return `u:${node.url}`;
+  return `f:${normTitle(node.title)}`;
+}
+
+function findBestMatch(desired, existingList, usedIds) {
+  const wantKey = desiredKey(desired);
+  for (const ex of existingList) {
+    if (usedIds.has(ex.id)) continue;
+    if (existingKey(ex) === wantKey) return ex;
+  }
+  // Fallback for URLs: also try title match when URL duplicates exist.
+  if (desired.type === "url") {
+    const wantTitle = normTitle(desired.name);
+    for (const ex of existingList) {
+      if (usedIds.has(ex.id)) continue;
+      if (ex.url && normTitle(ex.title) === wantTitle) return ex;
+    }
+  }
+  return null;
+}
+
+async function safeRemoveTree(id) {
+  try {
+    await chrome.bookmarks.removeTree(id);
+  } catch (err) {
+    console.warn(`Aviso ao remover nó ${id}:`, err);
+  }
+}
+
+async function ensureUpdated(existing, desired) {
+  const updates = {};
+  const wantTitle = normTitle(desired.name);
+  if (normTitle(existing.title) !== wantTitle) updates.title = wantTitle;
+  if (desired.type === "url" && existing.url !== desired.url) updates.url = desired.url;
+  if (Object.keys(updates).length === 0) return;
+  await chrome.bookmarks.update(existing.id, updates);
+}
+
+async function reorderChildren(parentId, orderedIds) {
+  for (let i = 0; i < orderedIds.length; i++) {
     try {
-      await chrome.bookmarks.removeTree(child.id);
+      await chrome.bookmarks.move(orderedIds[i], { parentId, index: i });
     } catch (err) {
-      console.warn(`Aviso ao remover nó ${child.id}:`, err);
+      console.warn(`Aviso ao reordenar nó ${orderedIds[i]}:`, err);
     }
   }
 }
 
-async function createNodes(simpleNodes, parentId) {
-  for (const node of simpleNodes) {
-    if (node.type === "url") {
-      await chrome.bookmarks.create({ parentId, title: node.name, url: node.url });
+async function syncFolderStrict(parentId, desiredNodes) {
+  const existingChildren = await chrome.bookmarks.getChildren(parentId);
+  const usedIds = new Set();
+  const finalOrder = [];
+
+  for (const desired of desiredNodes) {
+    const match = findBestMatch(desired, existingChildren, usedIds);
+    if (match) {
+      usedIds.add(match.id);
+      await ensureUpdated(match, desired);
+      finalOrder.push(match.id);
+
+      if (desired.type === "folder") {
+        await syncFolderStrict(match.id, desired.children || []);
+      }
       continue;
     }
-    if (node.type === "folder") {
-      const createdFolder = await chrome.bookmarks.create({ parentId, title: node.name });
-      await createNodes(node.children || [], createdFolder.id);
+
+    if (desired.type === "url") {
+      const created = await chrome.bookmarks.create({
+        parentId,
+        title: normTitle(desired.name),
+        url: desired.url
+      });
+      finalOrder.push(created.id);
+      continue;
+    }
+
+    if (desired.type === "folder") {
+      const createdFolder = await chrome.bookmarks.create({
+        parentId,
+        title: normTitle(desired.name)
+      });
+      finalOrder.push(createdFolder.id);
+      await syncFolderStrict(createdFolder.id, desired.children || []);
     }
   }
+
+  // Remove anything not present in Safari.
+  for (const ex of existingChildren) {
+    if (!usedIds.has(ex.id)) await safeRemoveTree(ex.id);
+  }
+
+  await reorderChildren(parentId, finalOrder);
 }
 
 function flashBadgeSuccess() {
@@ -141,10 +221,9 @@ async function syncBookmarks() {
       return;
     }
 
-    await clearFolder(barId);
-    await clearFolder(otherId);
-    await createNodes(safariData.bookmark_bar || [], barId);
-    await createNodes(safariData.other || [], otherId);
+    // Strict mirror (Safari is source of truth), but apply changes via diff instead of wipe+rebuild.
+    await syncFolderStrict(barId, safariData.bookmark_bar || []);
+    await syncFolderStrict(otherId, safariData.other || []);
 
     flashBadgeSuccess();
   } catch (err) {
