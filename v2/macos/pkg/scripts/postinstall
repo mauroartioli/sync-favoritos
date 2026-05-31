@@ -7,6 +7,20 @@ LA_DST="/Library/LaunchAgents/com.mauroartioli.syncfavoritos.plist"
 chmod 644 "${LA_DST}" 2>/dev/null || true
 chown root:wheel "${LA_DST}" 2>/dev/null || true
 
+echo ""
+echo "== Sync Favoritos: ativando LaunchAgent para o usuário atual =="
+CONSOLE_USER="$(stat -f%Su /dev/console || true)"
+if [ -n "${CONSOLE_USER}" ] && [ "${CONSOLE_USER}" != "root" ]; then
+  CONSOLE_UID="$(id -u "${CONSOLE_USER}" || true)"
+  if [ -n "${CONSOLE_UID}" ]; then
+    # Load it immediately (otherwise it will only start after logout/login).
+    /bin/launchctl bootout "gui/${CONSOLE_UID}" "${LA_DST}" 2>/dev/null || true
+    /bin/launchctl bootstrap "gui/${CONSOLE_UID}" "${LA_DST}" 2>/dev/null || true
+    /bin/launchctl kickstart -k "gui/${CONSOLE_UID}/com.mauroartioli.syncfavoritos" 2>/dev/null || true
+    echo "LaunchAgent carregado para: ${CONSOLE_USER} (uid=${CONSOLE_UID})"
+  fi
+fi
+
 echo "Sync Favoritos instalado em: ${APP_DST}"
 echo "LaunchAgent instalado em: ${LA_DST}"
-echo "Próximo passo: conceder 'Acesso Total ao Disco' para ${APP_DST} e reiniciar a sessão (logout/login) para iniciar automaticamente."
+echo "Próximo passo: conceder 'Acesso Total ao Disco' para ${APP_DST}."
