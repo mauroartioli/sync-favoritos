@@ -8,7 +8,7 @@
 let isSyncing = false;
 
 const DEFAULTS = {
-  endpoint: "http://127.0.0.1:5003/safari_bookmarks.json",
+  endpoint: "http://127.0.0.1:5004/safari_bookmarks.json",
   token: ""
 };
 
@@ -135,4 +135,3 @@ async function syncBookmarks() {
     isSyncing = false;
   }
 }
-

@@ -61,6 +61,28 @@ launchctl bootout "gui/${UID_NUM}" "${PLIST_PATH}" 2>/dev/null || true
 launchctl bootstrap "gui/${UID_NUM}" "${PLIST_PATH}"
 launchctl kickstart -k "gui/${UID_NUM}/${PLIST_LABEL}"
 
+echo "5) Ajustando porta automaticamente (se necessário)..."
+if [ -f "${CFG_PATH}" ]; then
+  CFG_PATH="${CFG_PATH}" python3 - <<'PY'
+import json, os, subprocess, sys
+cfg_path = os.path.expanduser(os.environ["CFG_PATH"])
+with open(cfg_path, "r", encoding="utf-8") as f:
+    cfg = json.load(f)
+port = int(cfg.get("port", 5004))
+def port_in_use(p: int) -> bool:
+    try:
+        r = subprocess.run(["lsof", "-n", f"-iTCP:{p}", "-sTCP:LISTEN"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return r.returncode == 0
+    except Exception:
+        return False
+if port == 5003 and port_in_use(5003):
+    cfg["port"] = 5004
+    with open(cfg_path, "w", encoding="utf-8") as f:
+        json.dump(cfg, f)
+    print("Porta 5003 estava em uso; config atualizada para 5004.")
+PY
+fi
+
 echo ""
 echo "✓ Instalado."
 echo ""

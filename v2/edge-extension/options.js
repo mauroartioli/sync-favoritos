@@ -5,7 +5,7 @@ const statusEl = document.getElementById("status");
 
 async function load() {
   const { sf_endpoint, sf_token } = await chrome.storage.local.get(["sf_endpoint", "sf_token"]);
-  endpointInput.value = sf_endpoint || "http://127.0.0.1:5003/safari_bookmarks.json";
+  endpointInput.value = sf_endpoint || "http://127.0.0.1:5004/safari_bookmarks.json";
   tokenInput.value = sf_token || "";
 }
 
@@ -23,4 +23,3 @@ async function save() {
 
 saveBtn.addEventListener("click", () => save());
 load();
-

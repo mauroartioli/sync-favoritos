@@ -43,6 +43,6 @@ Se você quiser habilitar token no gateway (ou mudar endpoint), abra:
 
 Abra no navegador:
 
-- `http://127.0.0.1:5003/health`
+- `http://127.0.0.1:5004/health`
 
 Se estiver ok, deve retornar JSON com `ok: true`.
