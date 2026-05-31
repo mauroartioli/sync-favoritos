@@ -10,10 +10,18 @@ BIN_PATH="${BIN_DIR}/syncfavoritos"
 LOG_PATH="${APP_SUPPORT_DIR}/syncfavoritos.log"
 CFG_PATH="${APP_SUPPORT_DIR}/config.json"
 
+APP_BUNDLE_PATH="${APP_SUPPORT_DIR}/SyncFavoritos.app"
+APP_CONTENTS_PATH="${APP_BUNDLE_PATH}/Contents"
+APP_MACOS_PATH="${APP_CONTENTS_PATH}/MacOS"
+APP_RESOURCES_PATH="${APP_CONTENTS_PATH}/Resources"
+APP_EXE_PATH="${APP_MACOS_PATH}/SyncFavoritos"
+APP_INFO_PLIST="${APP_CONTENTS_PATH}/Info.plist"
+
 LAUNCH_AGENTS_DIR="${HOME}/Library/LaunchAgents"
 PLIST_LABEL="com.mauroartioli.syncfavoritos"
 PLIST_PATH="${LAUNCH_AGENTS_DIR}/${PLIST_LABEL}.plist"
 PLIST_TEMPLATE="${ROOT_DIR}/LaunchAgent.com.mauroartioli.syncfavoritos.plist"
+INFO_PLIST_TEMPLATE="${ROOT_DIR}/Info.plist.template"
 
 echo "== Sync Favoritos v2 :: Instalação (macOS) =="
 echo ""
@@ -49,6 +57,12 @@ fi
 cp -f "${SRC_BIN}" "${BIN_PATH}"
 chmod +x "${BIN_PATH}"
 
+echo "2a) Empacotando como app (sem Dock)..."
+mkdir -p "${APP_MACOS_PATH}" "${APP_RESOURCES_PATH}"
+cp -f "${BIN_PATH}" "${APP_EXE_PATH}"
+chmod +x "${APP_EXE_PATH}"
+cp -f "${INFO_PLIST_TEMPLATE}" "${APP_INFO_PLIST}"
+
 echo "2b) Aplicando config default (sem token)..."
 CFG_PATH="${CFG_PATH}" python3 - <<'PY'
 import json, os
@@ -73,7 +87,7 @@ PY
 
 echo "3) Preparando LaunchAgent..."
 sed \
-  -e "s|__BIN_PATH__|${BIN_PATH}|g" \
+  -e "s|__APP_EXE_PATH__|${APP_EXE_PATH}|g" \
   -e "s|__LOG_PATH__|${LOG_PATH}|g" \
   "${PLIST_TEMPLATE}" > "${PLIST_PATH}"
 
@@ -110,10 +124,11 @@ echo "✓ Instalado."
 echo ""
 echo "Arquivos:"
 echo "- Binário: ${BIN_PATH}"
+echo "- App:     ${APP_BUNDLE_PATH}"
 echo "- Config:  ${CFG_PATH}"
 echo "- Logs:    ${LOG_PATH}"
 echo ""
 echo "Próximos passos:"
-echo "1) Conceda Acesso Total ao Disco ao binário acima (Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco)."
+echo "1) Conceda Acesso Total ao Disco ao app acima (Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco)."
 echo "2) Carregue a extensão do Edge em: ${REPO_DIR}/v2/edge-extension"
 echo "3) (Opcional) Se você quiser habilitar token, edite o config.json e preencha o campo 'token'."

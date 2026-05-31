@@ -12,7 +12,8 @@ chmod +x install.sh uninstall.sh
 
 Isso instala:
 
-- Binário: `~/Library/Application Support/SyncFavoritos/bin/syncfavoritos`
+- App: `~/Library/Application Support/SyncFavoritos/SyncFavoritos.app`
+- Binário (interno): `~/Library/Application Support/SyncFavoritos/SyncFavoritos.app/Contents/MacOS/SyncFavoritos`
 - Config: `~/Library/Application Support/SyncFavoritos/config.json`
 - Logs: `~/Library/Application Support/SyncFavoritos/syncfavoritos.log`
 - LaunchAgent: `~/Library/LaunchAgents/com.mauroartioli.syncfavoritos.plist`
@@ -21,7 +22,7 @@ Isso instala:
 
 Para o daemon conseguir ler `~/Library/Safari/Bookmarks.plist`, conceda **Acesso Total ao Disco** para:
 
-`~/Library/Application Support/SyncFavoritos/bin/syncfavoritos`
+`~/Library/Application Support/SyncFavoritos/SyncFavoritos.app`
 
 Caminho: Ajustes do Sistema → Privacidade e Segurança → Acesso Total ao Disco.
 
